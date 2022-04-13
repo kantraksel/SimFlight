@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="3rdParty">
+      <UniqueIdentifier>{5960c176-57a7-42cd-ab2f-7d8ca1d257d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\FlightGear">
+      <UniqueIdentifier>{3d6ea4be-1f0e-4def-8924-43baa59c0f21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{725c4ee2-c032-4d72-9381-5a63bfbbd484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{07021ad5-406a-4cec-904f-1537abda8a2b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SocketApi.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Maths.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\FlightGear\tiny_xdr.cxx">
+      <Filter>3rdParty\FlightGear</Filter>
+    </ClCompile>
+    <ClCompile Include="FGServer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="SCClient.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="SimFlight.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SocketApi.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Maths.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\FlightGear\stdint.hxx">
+      <Filter>3rdParty\FlightGear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\FlightGear\tiny_xdr.hxx">
+      <Filter>3rdParty\FlightGear</Filter>
+    </ClInclude>
+    <ClInclude Include="FGServer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="SCClient.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\SimConnect\SimConnect.h">
+      <Filter>3rdParty</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
