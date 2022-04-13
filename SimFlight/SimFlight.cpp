@@ -5,6 +5,12 @@
 #include "FGServer.h"
 #include "SCClient.h"
 
+#pragma comment(linker,"/manifestdependency:\"type='win32' " \
+    "name='" "Microsoft.FlightSimulator.SimConnect" "' " \
+    "version='" "10.0.63003.0" "' " \
+    "processorArchitecture='x86' " \
+    "publicKeyToken='" "7554e4e7414ac468" "'\"")
+
 #define APP_VERSION "0.1.0"
 //NOTE: this data is temporarily constant - will be loaded from file in future
 #define FG_SERVER "217.78.131.42" //mpserver01.flightgear.org - highest availability
