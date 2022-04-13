@@ -1,0 +1,3 @@
+[submodule "3rdParty/WNET"]
+	path = 3rdParty/WNET
+	url = https://github.com/kantraksel/WNET
