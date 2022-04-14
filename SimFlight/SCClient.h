@@ -11,7 +11,9 @@ class SCClient
 
 			double altitude;
 			double heading;
-			double speed;
+			double pitch;
+			double roll;
+			//double speed;
 		};
 
 		typedef std::function<void(AirplaneData& data)> UpdateDataEvent;

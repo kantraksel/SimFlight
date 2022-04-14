@@ -105,9 +105,8 @@ void App::FlightGearThread()
 		data.Latitude = airplaneData.latitude;
 		data.Altitude = airplaneData.altitude;
 		data.Heading = airplaneData.heading;
-		data.Pitch = 0;
-		data.Roll = 0;
-		//unused: speed
+		data.Pitch = airplaneData.pitch;
+		data.Roll = airplaneData.roll;
 
 		fg.ProcessTick(data, FGGetTime());
 
