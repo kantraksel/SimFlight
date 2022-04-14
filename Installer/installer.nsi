@@ -78,29 +78,37 @@ Section "Program files (required)" SectionAppFiles
   File "COPYING\GPL.md"
   File "COPYING\COMMITMENT"
   File "COPYING\SC.EULA.html"
+  SetOutPath $InstDir
 SectionEnd
 
 Section "SimConnect (recommended)" SectionSimConnect
+  SetOutPath $InstDir
   File "SimConnect.msi"
   ExecWait "msiexec /i $InstDir\SimConnect.msi"
 SectionEnd
 
-Section "Start Menu shortcut"
-  CreateShortcut /NoWorkingDir "$SMPrograms\${NAME}.lnk" "$InstDir\${NAME_EXE}"
+Section "Start Menu shortcut" SectionStartMenuShortcut
+  SetOutPath $InstDir
+  CreateShortcut "$SMPrograms\${NAME}.lnk" "$InstDir\${NAME_EXE}"
 SectionEnd
 
-Section "Desktop shortcut"
-  CreateShortcut /NoWorkingDir "$Desktop\${NAME}.lnk" "$InstDir\${NAME_EXE}"
+Section "Desktop shortcut" SectionDesktopShortcut
+  SetOutPath $InstDir
+  CreateShortcut "$Desktop\${NAME}.lnk" "$InstDir\${NAME_EXE}"
 SectionEnd
 
 ;--------------------------------
 ;Section descriptions
 LangString DESC_SectionAppFiles ${LANG_ENGLISH} "Base program files"
-LangString DESC_SectionSimConnect ${LANG_ENGLISH} "Recommended. SimConnect 10.0.63003.0 is needed by this program."
+LangString DESC_SectionSimConnect ${LANG_ENGLISH} "Recommended. SimConnect 10.0.63003.0 is needed by this program"
+LangString DESC_SectionStartMenuShortcut ${LANG_ENGLISH} "Start Menu shortcut to SimFlight"
+LangString DESC_SectionDesktopShortcut ${LANG_ENGLISH} "Desktop shortcut to SimFlight"
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SectionAppFiles} $(DESC_SectionAppFiles)
   !insertmacro MUI_DESCRIPTION_TEXT ${SectionSimConnect} $(DESC_SectionSimConnect)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SectionStartMenuShortcut} $(DESC_SectionStartMenuShortcut)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SectionDesktopShortcut} $(DESC_SectionDesktopShortcut)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
