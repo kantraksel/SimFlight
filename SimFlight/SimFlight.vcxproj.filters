@@ -33,7 +33,25 @@
     <ClCompile Include="SCClient.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="SimFlight.cpp">
+    <ClCompile Include="App.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicBody.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="FGData.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalAirplane.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="FlightSimulatorState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -61,6 +79,36 @@
     </ClInclude>
     <ClInclude Include="..\3rdParty\SimConnect\SimConnect.h">
       <Filter>3rdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicBody.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeDef.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="FGData.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalAirplane.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="AirplaneData.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\mINI\ini.h">
+      <Filter>3rdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="FlightSimulatorState.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

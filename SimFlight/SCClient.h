@@ -1,31 +1,27 @@
 #pragma once
-#include <functional>
+#include "AirplaneData.h"
+#include "FlightSimulatorState.h"
 
 class SCClient
 {
 	public:
-		struct AirplaneData
+		struct AirplaneEvents
 		{
-			double longitude;
-			double latitude;
-
-			double altitude;
-			double heading;
-			double pitch;
-			double roll;
-			//double speed;
+			virtual void OnFlightStart() = 0;
+			virtual void OnFlightEnd() = 0;
+			virtual void OnUpdate(const AirplaneData& data) = 0;
 		};
-
-		typedef std::function<void(AirplaneData& data)> UpdateDataEvent;
 
 	private:
 		void* hSimConnect;
 		void* hEvent;
 		bool isRunning;
-		UpdateDataEvent updateEvent;
+		AirplaneEvents* pEvents;
+		FlightSimulatorState fsState;
 
 		bool DefineAirplaneData();
 		void SimConnectDispatch(void* pData, unsigned long cbData);
+		void UpdateFlightState(bool isRunning);
 
 	public:
 		SCClient();
@@ -35,5 +31,5 @@ class SCClient
 		void Disconnnect();
 		void RunLoop();
 
-		void SetUpdateDataEvent(UpdateDataEvent event);
+		void SetEvent(AirplaneEvents* pEvents);
 };

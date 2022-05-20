@@ -19,14 +19,14 @@ namespace Maths
 
 	struct Geod
 	{
-		static constexpr double FeetToMeter = 0.3048;
+		static constexpr double FootToMeter = 0.3048;
 
 		double longitude;
 		double latitude;
 		double elevation;
 
 		Geod(double longRad, double latRad, double elevFt) :
-			longitude(longRad), latitude(latRad), elevation(elevFt * FeetToMeter)
+			longitude(longRad), latitude(latRad), elevation(elevFt * FootToMeter)
 		{}
 
 		inline double getLongitudeRad() const

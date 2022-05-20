@@ -1,10 +1,12 @@
 #include "FGServer.h"
+#include <chrono>
 #include <numbers>
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include "WNET/include/wnet.h"
 #include "FlightGear/tiny_xdr.hxx"
 #include "Maths.h"
+#include "Logger.h"
 
 #define HSOCKET(pSocket) ((WNET::IClientSocket*)pSocket)
 constexpr uint32_t Magic = 0x46474653;
@@ -43,14 +45,6 @@ struct PositionMsg
 	xdr_data_t Reserved0;
 };
 
-//tmp:
-struct Property
-{
-	xdr_data_t id;
-	xdr_data_t strlen;
-	xdr_data_t str[3]; //3=strlen
-};
-
 FGServer::FGServer()
 {
 	pSocket = WNET::IClientSocket::Create();
@@ -64,6 +58,8 @@ FGServer::FGServer()
 	header.Lenght = XDR_encode_uint32(sizeof(PositionMsg));
 	header.RequestedRange = XDR_encode_uint32(100);
 	header.Reserved0 = 0;
+
+	body.SetNode(11990, 1);
 }
 
 FGServer::~FGServer()
@@ -76,13 +72,17 @@ void FGServer::SelectServer(const char* host, unsigned short port)
 	HSOCKET(pSocket)->Connect(host, port);
 }
 
-void FGServer::SetPeer(const char* callsign, const char* aircraft)
+void FGServer::SetPeer(const char* callsign, const char* aircraft, const char* livery, long fallbackId)
 {
 	static PositionMsg& msg = *(PositionMsg*)packetBuff;
 	static Header& header = msg.header;
 
 	memcpy_s(&header.Callsign, sizeof(header.Callsign), callsign, strlen(callsign));
 	memcpy_s(&msg.Model, sizeof(msg.Model), aircraft, strlen(aircraft));
+	body.SetNode(1101, livery, strlen(livery));
+	body.SetNode(13000, fallbackId);
+
+	body.SetNode(13000, 252);
 }
 
 struct CartesianPos
@@ -91,31 +91,42 @@ struct CartesianPos
 	Maths::Vec3f Orientation;
 };
 
-void GeoToCartPos(FGServer::AirplaneData& geoData, CartesianPos& cartData)
+static void GeoToCartPos(AirplaneData& geoData, CartesianPos& cartData)
 {
-	double longitude = geoData.Longitude * DegreesToRadians;
-	double latitude = geoData.Latitude * DegreesToRadians;
-	Maths::Geod geod(longitude, latitude, geoData.Altitude);
+	double longitude = geoData.longitude * DegreesToRadians;
+	double latitude = geoData.latitude * DegreesToRadians;
+	Maths::Geod geod(longitude, latitude, geoData.altitude);
 	Maths::GeodToCart(geod, cartData.Position);
 
-	geoData.Heading *= DegreesToRadians;
-	geoData.Pitch *= DegreesToRadians;
-	geoData.Roll *= DegreesToRadians;
+	geoData.heading *= DegreesToRadians;
+	geoData.pitch *= DegreesToRadians;
+	geoData.roll *= DegreesToRadians;
 	auto localFrame = Maths::EarthRadToLocalFrame(longitude, latitude);
-	auto orientation = Maths::EulerRadToQuat(geoData.Heading, geoData.Pitch, geoData.Roll);
+	auto orientation = Maths::EulerRadToQuat(geoData.heading, geoData.pitch, geoData.roll);
 	orientation = localFrame * orientation;
 	orientation.getAngleAxis(cartData.Orientation);
 }
 
-void FGServer::ProcessTick(AirplaneData& geoData, double time)
+static double GetTime()
+{
+	auto now = std::chrono::system_clock::now().time_since_epoch();
+	auto today = std::chrono::floor<std::chrono::days>(now);
+	now = now - today;
+	return now.count() / 10000000.0;
+}
+
+void FGServer::ProcessTick(AirplaneData geoData)
 {
 	static PositionMsg& msg = *(PositionMsg*)packetBuff;
 	static Header& header = msg.header;
 
+	geoData.pitch = -geoData.pitch;
+	geoData.roll = -geoData.roll;
+
 	CartesianPos cartData;
 	GeoToCartPos(geoData, cartData);
 	
-	msg.Time = XDR_encode_double(time);
+	msg.Time = XDR_encode_double(GetTime());
 	msg.Lag = XDR_encode_double(0.10000000000000001); //seems to be const - check along much more data
 	msg.Position[0] = XDR_encode_double(cartData.Position.x);
 	msg.Position[1] = XDR_encode_double(cartData.Position.y);
@@ -124,25 +135,51 @@ void FGServer::ProcessTick(AirplaneData& geoData, double time)
 	msg.Orientation[1] = XDR_encode_float(cartData.Orientation.y);
 	msg.Orientation[2] = XDR_encode_float(cartData.Orientation.z);
 
-	// accels are always zero
-	/*
-	if paused - zeros
-	else
-	motionInfo.linearVel = SG_FEET_TO_METER*SGVec3f(ifce.get_uBody(),
-			ifce.get_vBody(),
-			ifce.get_wBody());
-		motionInfo.angularVel = SGVec3f(ifce.get_P_body(),
-			ifce.get_Q_body(),
-			ifce.get_R_body());
-	*/
+	body.SetNode(100, geoData.aileronLeft);
+	body.SetNode(101, -geoData.aileronRight);
+	body.SetNode(102, -geoData.elevator);
+	body.SetNode(103, geoData.rudder);
+	body.SetNode(104, geoData.flaps);
+	body.SetNode(105, geoData.spoilersLeft);
 
-	//static Property& prop = *(Property*)(packetBuff + sizeof(PositionMsg));
-	//prop.id = XDR_encode_uint32(0x044D); //livery
-	//prop.id = XDR_encode_uint32(0x2712); //chat
-	//prop.strlen = XDR_encode_uint32(3);
-	//prop.str[0] = XDR_encode_int8('K');
-	//prop.str[1] = XDR_encode_int8('L');
-	//prop.str[2] = XDR_encode_int8('M');
-	
-	HSOCKET(pSocket)->Send(packetBuff, sizeof(PositionMsg));
+	body.SetNode(201, geoData.gearExtendedPct);
+	body.SetNode(211, geoData.gearExtendedPct);
+	body.SetNode(221, geoData.gearExtendedPct);
+	body.SetNode(231, geoData.gearExtendedPct);
+	body.SetNode(241, geoData.gearExtendedPct);
+
+	geoData.engine1n1 /= AirplaneData::EngineRPMMax;
+	geoData.engine1n2 /= AirplaneData::EngineRPMMax;
+	geoData.engine2n1 /= AirplaneData::EngineRPMMax;
+	geoData.engine2n2 /= AirplaneData::EngineRPMMax;
+	geoData.engine3n1 /= AirplaneData::EngineRPMMax;
+	geoData.engine3n2 /= AirplaneData::EngineRPMMax;
+	geoData.engine4n1 /= AirplaneData::EngineRPMMax;
+	geoData.engine4n2 /= AirplaneData::EngineRPMMax;
+
+	body.SetNode(300, geoData.engine1n1);
+	body.SetNode(301, geoData.engine1n2);
+	body.SetNode(302, geoData.engine1n1);
+	body.SetNode(310, geoData.engine2n1);
+	body.SetNode(311, geoData.engine2n2);
+	body.SetNode(312, geoData.engine2n1);
+	body.SetNode(320, geoData.engine3n1);
+	body.SetNode(321, geoData.engine3n2);
+	body.SetNode(322, geoData.engine3n1);
+	body.SetNode(330, geoData.engine4n1);
+	body.SetNode(331, geoData.engine4n2);
+	body.SetNode(332, geoData.engine4n1);
+
+	body.SetNode(1500, geoData.squawkCode);
+
+	int bodySize = body.WriteBody(packetBuff + sizeof(PositionMsg), sizeof(packetBuff) - sizeof(PositionMsg));
+	if (bodySize == -1)
+	{
+		Logger::Log("FGServer::ProcessTick() - body overflow. Body has been cleared to avoid error spam");
+		body.Clear();
+		bodySize = 0;
+	}
+
+	header.Lenght = XDR_encode_uint32(sizeof(PositionMsg) + bodySize);
+	HSOCKET(pSocket)->Send(packetBuff, sizeof(PositionMsg) + bodySize);
 }
