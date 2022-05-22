@@ -70,6 +70,7 @@ Section "Program files (required)" SectionAppFiles
 
   ;Files
   File "${NAME_EXE}"
+  File "config.ini"
   
   File "LICENSE.md"
   CreateDirectory "$InstDir\COPYING"
@@ -115,6 +116,7 @@ LangString DESC_SectionDesktopShortcut ${LANG_ENGLISH} "Desktop shortcut to SimF
 ;Uninstaller
 Section -Uninstall
   Delete "$InstDir\${NAME_EXE}"
+  Delete "$InstDir\config.ini"
   Delete "$InstDir\SimConnect.msi"
   Delete "$InstDir\log.txt"
   

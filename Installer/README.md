@@ -2,5 +2,5 @@
 
 Installer script requires in this directory:
 - SimFlight.exe
-- README.md
+- LICENSE.md
 - COPYING
