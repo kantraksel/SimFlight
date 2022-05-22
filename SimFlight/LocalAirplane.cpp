@@ -1,4 +1,5 @@
 #include "LocalAirplane.h"
+#include "Logger.h"
 
 LocalAirplane::LocalAirplane()
 {
@@ -19,11 +20,13 @@ void LocalAirplane::OnTick()
 void LocalAirplane::EnableTransmission()
 {
 	isServerEnabled = true;
+	Logger::Log("Airplane: broadcast enabled");
 }
 
 void LocalAirplane::DisableTransmission()
 {
 	isServerEnabled = false;
+	Logger::Log("Airplane: broadcast disabled");
 }
 
 void LocalAirplane::OnFlightStart()

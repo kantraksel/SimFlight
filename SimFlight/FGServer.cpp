@@ -170,7 +170,7 @@ void FGServer::ProcessTick(AirplaneData geoData)
 	body.SetNode(331, geoData.engine4n2);
 	body.SetNode(332, geoData.engine4n1);
 
-	body.SetNode(1500, geoData.squawkCode);
+	body.SetNode(1500, (long)geoData.squawkCode);
 
 	int bodySize = body.WriteBody(packetBuff + sizeof(PositionMsg), sizeof(packetBuff) - sizeof(PositionMsg));
 	if (bodySize == -1)

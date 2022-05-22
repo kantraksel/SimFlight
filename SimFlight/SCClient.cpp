@@ -171,7 +171,7 @@ void SCClient::SimConnectDispatch(void* pData, unsigned long cbData)
 		case SIMCONNECT_RECV_ID_QUIT:
 		{
 			isRunning = false;
-			Logger::Log("SCClient - Disconnected by Flight Simulator");
+			Logger::Log("Flight Simulator has terminated connection!");
 			fsState.Reset();
 			pEvents->OnFlightEnd();
 			break;

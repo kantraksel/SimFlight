@@ -66,9 +66,15 @@ void App::PrepareAirplane()
 	auto livery = config.GetString(Config::Section::Aircraft, "Livery");
 	auto fallbackId = config.GetInt(Config::Section::Aircraft, "FallbackId");
 
+	Logger::Log("");
+	Logger::Log(std::format("Callsign {}", callsign));
+	Logger::Log(std::format("Airplane {}", aircraft));
+	Logger::Log(std::format("Livery {}", livery));
+	Logger::Log("");
+
 	server.SelectServer(ip.c_str(), port);
 	server.SetPeer(callsign.c_str(), aircraft.c_str(), livery.c_str(), fallbackId);
-	Logger::Log("Prepared FlightGear connection");
+	Logger::Log("Loaded airplane data");
 }
 
 #pragma region Threads
@@ -77,7 +83,7 @@ void App::SimConnectThread()
 {
 	client.RunLoop();
 	isAppRunning = false;
-	Logger::Log("SimConnect thread ended");
+	Logger::Log("Flight Simulator: Thread ended");
 }
 
 void App::AirplaneThread()
@@ -96,7 +102,7 @@ void App::AirplaneThread()
 		std::this_thread::sleep_for(std::chrono::milliseconds(SendRateMs - (long long)delta));
 	}
 
-	Logger::Log("FlightGear thread ended");
+	Logger::Log("Airplane: Thread ended");
 }
 
 #pragma endregion
