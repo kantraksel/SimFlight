@@ -1,5 +1,3 @@
-Full text of GNU General Public License version 2 is in GPL.md file.
-
 This program uses code from FlightGear (GNU General Public License version 2).
 Other software used:
 - [mINI](https://github.com/pulzed/mINI) - Copyright (c) 2018 Danijel Durakovic
